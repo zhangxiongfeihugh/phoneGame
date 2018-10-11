@@ -4,6 +4,7 @@ public class Person {
 	private double speakingClarity;
 	private double listeningAbility;
 	private String name;
+	private int askRepeatTimes = 0;
 	private  SinglyLinkedList<Word> sentence = new SinglyLinkedList<>();
 
 	public Person(double speakingClarity, double listeningAbility, String name){
@@ -40,7 +41,19 @@ public class Person {
 		return sentence;
 	}
 
-	@Override
+    public void setSentence(SinglyLinkedList<Word> sentence) {
+        this.sentence = sentence;
+    }
+
+    public int getAskRepeatTimes() {
+        return askRepeatTimes;
+    }
+
+    public void setAskRepeatTimes(int askRepeatTimes) {
+        this.askRepeatTimes = askRepeatTimes;
+    }
+
+    @Override
 	public String toString() {
 		return "Person{" +
 				"speakingClarity=" + speakingClarity +
@@ -72,13 +85,22 @@ public class Person {
     }
 
 
-    public void listen(SinglyLinkedList<Word> wordsSaid, double speakingClarityOfLastPlayer) {
+    /**
+     * 3词以上没听清返回false 否则返回true
+     * @param wordsSaid
+     * @param speakingClarityOfLastPlayer
+     * @return
+     */
+    public boolean listen(SinglyLinkedList<Word> wordsSaid, double speakingClarityOfLastPlayer) {
         SinglyLinkedNode<Word> wordNode = wordsSaid.getHead();
+        int  misheardWordsCount = 0;
+        sentence =  new SinglyLinkedList<>();
         do{
             Word word = wordNode.getData();
             //插入听到的话
             if(Math.random() >  this.listeningAbility*speakingClarityOfLastPlayer) {
                 sentence.insert(new Word(word.getCurrent(), "___"));
+                misheardWordsCount++;
             } else{
                 sentence.insert(new Word(word.getCurrent(), word.getCurrent()));
             }
@@ -93,11 +115,15 @@ public class Person {
         }while ((wordNode = wordNode.getNext())!=null);
         result += "\"";
         System.out.println(result);
+        if(misheardWordsCount>3){
+            return false;
+        }
+        return true;
     }
 
 
     /**
-     * 说话之前组织语言，补全听到的话organizeSentence
+     * 说话之前组织语言，补全听到的话
      */
     private void organizeSentence() {
         SinglyLinkedNode<Word> wordNode = sentence.getHead();
@@ -124,4 +150,7 @@ public class Person {
         }
     }
 
+    public void askAnotherPersonToRepeat(Person anotherPerson) {
+        System.out.println(name+" asks "+anotherPerson.getName()+" to repeat what they said.");
+    }
 }

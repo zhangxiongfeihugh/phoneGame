@@ -151,7 +151,7 @@ public class WordList {
                     break;
                 }
                 if (index == indexNode.getData()) {
-                    resultSentence.insert(new Word("", wordNode.getData()));
+                    resultSentence.insert(new Word("___", wordNode.getData()));
                     count++;
                     indexes.remove(indexNode.getData());
                     break;

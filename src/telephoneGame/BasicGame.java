@@ -10,7 +10,7 @@ import java.util.Scanner;
  *
  */
 public class BasicGame {
-	public static SinglyLinkedList<Person> players;
+	public static DoublyLinkedList<Person> players;
 
 	public static void main(String[] args) {
         players = GamePeopleListFactory.getPeopleList();
@@ -22,7 +22,7 @@ public class BasicGame {
             firstPlayer.getSentence().insert(new Word("", word.toLowerCase()));
 		}
 
-        SinglyLinkedNode<Person> currentPlayerNode = players.getHead(); //从第一个人开始游戏
+        DoublyLinkedNode<Person> currentPlayerNode = players.getHead(); //从第一个人开始游戏
         SinglyLinkedList<Word> lastWordsSaid =currentPlayerNode.getData().speakToAnotherPerson(currentPlayerNode.getNext().getData());
         double speakingClarityOfLastPlayer = currentPlayerNode.getData().getSpeakingClarity(); //上个人的speakingClarity
 
@@ -30,10 +30,21 @@ public class BasicGame {
             Person currentPlayer = currentPlayerNode.getData();
             Person nextPlayer = currentPlayerNode.getNext()==null?null:currentPlayerNode.getNext().getData();
 
-            currentPlayer.listen(lastWordsSaid,speakingClarityOfLastPlayer);  //当前人听
+            if(!currentPlayer.listen(lastWordsSaid,speakingClarityOfLastPlayer)) {  //当前人没听清
+                if(currentPlayer.getAskRepeatTimes()<5){  //该玩家问了上一个玩家小于5次
+                    DoublyLinkedNode<Person> previous = currentPlayerNode.getPrevious();
+                    currentPlayer.askAnotherPersonToRepeat(previous.getData());
+                    currentPlayer.setAskRepeatTimes(currentPlayer.getAskRepeatTimes()+1);
 
+                    currentPlayerNode = previous;   //回退到上个玩家
+                    currentPlayer = currentPlayerNode.getData();
+                    nextPlayer = currentPlayerNode.getNext().getData();
+                }else{                                       //重新生成5词，游戏继续
+                    currentPlayer.setSentence(WordList.getNewRandomSentence());
+                }
+            }
             lastWordsSaid = currentPlayer.speakToAnotherPerson(nextPlayer); //当前人对下个人说
-            speakingClarityOfLastPlayer = currentPlayerNode.getData().getSpeakingClarity();
+            speakingClarityOfLastPlayer = currentPlayerNode.getData().getSpeakingClarity(); //speakingClarity
         }
 		scanner.close();
 	}

@@ -3,13 +3,13 @@ package telephoneGame;
 import java.util.Scanner;
 
 public class GamePeopleListFactory {
-	private static SinglyLinkedList<Person> people = new SinglyLinkedList<Person>();
+	private static DoublyLinkedList<Person> people = new DoublyLinkedList<Person>();
 
     static {
 		people.insert(new Person(0.8,0.8,"Ellis"));
-		people.insert(new Person(0.9,0.9,"Allison"));
+		people.insert(new Person(0.6,0.9,"Allison"));
 		people.insert(new Person(0.8,0.9,"Andre"));
-		people.insert(new Person(0.9,0.7,"Micaela"));
+		people.insert(new Person(0.7,0.7,"Micaela"));
 		people.insert(new Person(0.8,0.9,"Shanshan"));
 	}
 
@@ -68,7 +68,7 @@ public class GamePeopleListFactory {
     }
 
 
-    public static SinglyLinkedList<Person> getPeopleList(){
+    public static DoublyLinkedList<Person> getPeopleList(){
         System.out.println("We now have five players in this game. Would you like to add another player?[please answer yes/no]");
         boolean add = false;
         Scanner s = new Scanner(System.in);
