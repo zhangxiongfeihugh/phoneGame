@@ -1,78 +1,82 @@
 package telephoneGame;
 /**
- * This class helps to implement SinglyLinkedList, 
+ * This class helps to implement DoublyLinkedList, 
  * with functions to get head, get size, insert and remove elements.
  * @author Huiyan Zhang; nicolezhang@brandeis.edu
  *
  * @param <T>
  */
-public class SinglyLinkedList<T>{
+public class DoublyLinkedList<T>{
 	public int size;
-	private SinglyLinkedNode<T> head;
-	private SinglyLinkedNode<T> tail;
-	
+	private DoublyLinkedNode<T> head;
+	private DoublyLinkedNode<T> tail;
+
 	/**
 	 * Constructor
 	 */
-	public SinglyLinkedList() {
+	public DoublyLinkedList() {
 		size = 0;
 	}
 	
 	/**
-	 * Method to get the head of the SinglyLinkedList
-	 * @return the head node of the SinglyLinkedList
+	 * Method to get the head of the DoublyLinkedList
+	 * @return the head node of the DoublyLinkedList
 	 * The running time is O(1)
 	 */
-	public SinglyLinkedNode<T> getHead() {
+	public DoublyLinkedNode<T> getHead() {
 		return head;
 	}
 
 	/**
-	 * Method to add a new SinglyLinkedNode with the given data at the specified index in the SinglyLinkedList
-	 * @param data, the data of the added SinglyLinkedNode
-	 * @param index, the position of the added SinglyinkedNode
+	 * Method to add a new DoublyLinkedNode with the given data at the specified index in the DoublyLinkedList
+	 * @param data, the data of the added DoublyLinkedNode
+	 * @param index, the position of the added DoublyinkedNode
 	 * The running time is O(n)
 	 */
 	public void insert(T data, int index) {
-		SinglyLinkedNode<T> add = new SinglyLinkedNode<T>();
+		DoublyLinkedNode<T> add = new DoublyLinkedNode<T>();
 		add.setData(data);
-		// check if the required index is existed in the SinglyLinkedList
+		// check if the required index is existed in the DoublyLinkedList
 		if(index>size+1 || index<1) {
 			System.out.println("Error: this is an invaild index to insert");
 			return;
 		}
-		// insert if the new SinglyLinkedNode should be added at the front of the SinglyLinkedList
+		// insert if the new DoublyLinkedNode should be added at the front of the DoublyLinkedList
 		if(index == 1) {
-			// check if the SinglyLinkedList is empty
+			// check if the DoublyLinkedList is empty
 			if(head == null) {
 				head = add;
 				tail = head;
 			}
 			else {
 				add.setNext(head);
+                head.setPrevious(add);
 				head = add;
 			}
 		}
-		// insert if the new SinglyLinkedNode is asked to be added at the end of the SinglyLinkedList
+		// insert if the new DoublyLinkedNode is asked to be added at the end of the DoublyLinkedList
 		if(index == size+1){
-			//check if the SinglyLinkedList is empty
+			//check if the DoublyLinkedList is empty
 			if(head == null) {
 				head = add;
 				tail = head;
 			} else {
 				tail.setNext(add);
+				add.setPrevious(tail);
 				tail = add;
 			}
 		}
-		// insert the new SinglyLinkedNode when the index is normal
+		// insert the new DoublyLinkedNode when the index is normal
 		if(index<=size && index>1) {
-			SinglyLinkedNode<T> ptr = head;
+			DoublyLinkedNode<T> ptr = head;
 			index = index - 1;
 			for(int i=1; i<size; i++) {
 				if(i == index) {
-					SinglyLinkedNode<T> tmp = ptr.getNext();
+					DoublyLinkedNode<T> tmp = ptr.getNext();
 					ptr.setNext(add);
+					add.setPrevious(ptr);
 					add.setNext(tmp);
+					tmp.setPrevious(add);
 					break;
 				}
 				ptr = ptr.getNext();
@@ -82,32 +86,33 @@ public class SinglyLinkedList<T>{
 	}
 	
 	/**
-	 * Method to insert the node to the end of SinglyLinkedList if no index is provided
-	 * @param data, the data of the added SinglyLinkedNode
+	 * Method to insert the node to the end of DoublyLinkedList if no index is provided
+	 * @param data, the data of the added DoublyLinkedNode
 	 * The running time is O(1)
 	 */
 	public void insert(T data) {
-		SinglyLinkedNode<T> add = new SinglyLinkedNode<T>();
+		DoublyLinkedNode<T> add = new DoublyLinkedNode<T>();
 		add.setData(data);
 		size++;
-		//check if the SinglyLinkedList is empty
+		//check if the DoublyLinkedList is empty
 		if(head == null) {
 			head = add;
 			tail = head;
 		} else {
 			tail.setNext(add);
+            add.setPrevious(tail);
 			tail = add;
 		}
 	}
 
 	/**
-	 * Method to remove and return the node at the given index in the SinglyLinkedList
-	 * @param index, the position of the SinglyLinkedNode which is asked to be removed
+	 * Method to remove and return the node at the given index in the DoublyLinkedList
+	 * @param index, the position of the DoublyLinkedNode which is asked to be removed
 	 * @return the node that is removed
 	 * The running time is O(n)
 	 */
-	public SinglyLinkedNode<T> remove(int index){     
-		SinglyLinkedNode<T> tmp = new SinglyLinkedNode<T>();
+	public DoublyLinkedNode<T> remove(int index){     
+		DoublyLinkedNode<T> tmp = new DoublyLinkedNode<T>();
 		// check if the index is invalid
 		if(index < 1 || index > size) {
 			try {
@@ -121,25 +126,23 @@ public class SinglyLinkedList<T>{
 	    if (index == 1) {
 	    	tmp = head;
 	        head = head.getNext();
+	        if(head!=null){
+                head.setPrevious(null);
+	        }
 	        size--; 
 	        return tmp;
 	    }
 	    // delete if the last node in the list is required to delete
-	    if (index == size) {
-	    	SinglyLinkedNode<T>  s = head;
-	    	SinglyLinkedNode<T>  t = head;
-	        while (s != tail){
-	            t = s;
-	            s = s.getNext();
-	        }
+	    if (index == size) {  //这里index肯定大于1，即不是head
+	    	DoublyLinkedNode<T>  lastButOne = tail.getPrevious();
 	        tmp = tail;
-	        tail = t;
+	        tail = lastButOne;
 	        tail.setNext(null);
 	        size --;
 	        return tmp;
 	    }
-	    SinglyLinkedNode<T>  ptr = head;
-	    SinglyLinkedNode<T>  curr = new SinglyLinkedNode<T>();
+	    DoublyLinkedNode<T>  ptr = head;
+	    DoublyLinkedNode<T>  curr = new DoublyLinkedNode<T>();
 	    index = index - 1 ;
 	    for (int i = 1; i < size - 1; i++) {
 	        if (i == index) {
@@ -147,6 +150,7 @@ public class SinglyLinkedList<T>{
 	            curr = tmp;
 	            tmp = tmp.getNext();
 	            ptr.setNext(tmp);
+	            tmp.setPrevious(ptr);
 	            break;
 	        }
 	        ptr = ptr.getNext();
@@ -156,41 +160,37 @@ public class SinglyLinkedList<T>{
 	}    
 	
 	/**
-	 * Method to remove the last element in the SinglyLinkedList if no index is provided
+	 * Method to remove the last element in the DoublyLinkedList if no index is provided
 	 * @return, the last Node in the list which is removed
 	 * The running time is O(n)
 	 */
-	public SinglyLinkedNode<T> remove() {
-		SinglyLinkedNode<T> tmp = head;
-		SinglyLinkedNode<T> t = head;
-		//如果只有一个元素或一个也没有
+	public DoublyLinkedNode<T> remove() {
+		DoublyLinkedNode<T> tmp = tail;
+        //如果只有一个元素或一个也没有
         if(size<2){
             head = null;
             tail = null;
             size = 0;
             return tmp;
         }
-		while(tmp != tail) {
-			t = tmp;
-			tmp = tmp.getNext();
-		}
-		tail = t;
+		tail = tail.getPrevious();
 		tail.setNext(null);
 		size--;
 		return tmp;
 	}
 
 	/**
-	 * Method to remove the first instance of a node with the specified data from the SinglyLinkedList
+	 * Method to remove the first instance of a node with the specified data from the DoublyLinkedList
 	 * @param data, the characteristic that the removed node should have
 	 * The running time is O(n)
 	 */
 	public void remove(T data) {
-		SinglyLinkedNode<T> tmp = head;
-		SinglyLinkedNode<T> previous = head;
-		// remove the first node in the SinglyLinkedList if the first node satisfied the required data
+		DoublyLinkedNode<T> tmp = head;
+		DoublyLinkedNode<T> previous = head;
+		// remove the first node in the DoublyLinkedList if the first node satisfied the required data
 		if(head.getData() == data ){
 			head = head.getNext();
+			head.setPrevious(null);
 			size--;
 			return;
 		}
@@ -211,6 +211,7 @@ public class SinglyLinkedList<T>{
 			}
 			if(tmp.getData() == data) {
 				previous.setNext(tmp.getNext());
+                tmp.getNext().setPrevious(previous);
 				size--;
 				return;
 			}
@@ -221,8 +222,8 @@ public class SinglyLinkedList<T>{
 	}
 
 	/**
-	 * Method to get the size of the SinglyLinkedList
-	 * @return the size of the SinglyLinkedList
+	 * Method to get the size of the DoublyLinkedList
+	 * @return the size of the DoublyLinkedList
 	 * The running time is O(1)
 	 */
 	public int size() {
@@ -230,11 +231,11 @@ public class SinglyLinkedList<T>{
 	}
 
 	/**
-	 * toString method to return the elements in the SinglyLinkedList
+	 * toString method to return the elements in the DoublyLinkedList
 	 * The running time is O(n)
 	 */
 	public String toString() {
-		SinglyLinkedNode<T> tmp = head;
+		DoublyLinkedNode<T> tmp = head;
 		String answer = "";
 		while(tmp != null){
 			answer = answer +"->" + tmp.getData();
