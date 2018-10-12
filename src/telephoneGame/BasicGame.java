@@ -36,6 +36,9 @@ public class BasicGame {
                     currentPlayer.askAnotherPersonToRepeat(previous.getData());
                     currentPlayer.setAskRepeatTimes(currentPlayer.getAskRepeatTimes()+1);
 
+                    /**
+                     * advance advanced advantage adventure advertising advice advise
+                     */
                     currentPlayerNode = previous;   //回退到上个玩家
                     currentPlayer = currentPlayerNode.getData();
                     nextPlayer = currentPlayerNode.getNext().getData();

@@ -77,22 +77,26 @@ public class WordList {
 
     public static String dropLetters(String word) {
         Random r = new Random();
-        int drop = r.nextInt(4);
+        int length = word.length();
+        int drop = r.nextInt(Math.min(3,length+1));  //不能掉段 3 ~ 5 ~ 8 ,否则找不到相似词
+        if(isNotSameLengthRange(length-drop,length)){  //掉段直接
+            return word;
+        }
         int count = 0;
         while (count < drop) {
-            int length = word.length();
-            int index = r.nextInt(length + 1);
-            String s = word;
-            if (index - 1 > 0) {
-                s = word.substring(0, index - 1);
-            }
-            if (word.length() > index + 1) {
-                s += word.substring(index + 1, word.length());
-            }
-            word = s;
+            int index = r.nextInt(length);
+            word= word.substring(0, index)+ word.substring(index + 1);
+            length = word.length();
             count++;
         }
         return word;
+    }
+
+    private static boolean isNotSameLengthRange(int i, int j) {
+        if((i<=3&&j>3)||(i<=5&&j>5)||(i<=8&&j>8)){
+            return true;
+        }
+        return false;
     }
 
     public static String findSimilarWord(String origin, String drop) {
@@ -122,6 +126,7 @@ public class WordList {
             }
             node = node.getNext();
         }
+      //  System.out.println("origin ["+origin+"] drop ["+drop+"] similarResult ["+res+"]");
         return res;
     }
 
