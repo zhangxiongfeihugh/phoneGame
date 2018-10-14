@@ -30,28 +30,34 @@ public class WordList {
     }
 
     public static void orderWordList() {
-        SinglyLinkedList<String> smallWordList = new SinglyLinkedList<String>();
-        SinglyLinkedList<String> midWordList = new SinglyLinkedList<String>();
-        SinglyLinkedList<String> largeWordList = new SinglyLinkedList<String>();
-        SinglyLinkedList<String> extraWordList = new SinglyLinkedList<String>();
         SinglyLinkedNode<String> curr = wordList.getHead();
         do {
-            String tmp = curr.getData();
-            int length = tmp.length();
-            if (length <= 3) {
-                smallWordList.insert(tmp);
-            } else if (length > 3 && length <= 5) {
-                midWordList.insert(tmp);
-            } else if (length > 5 && length <= 8) {
-                largeWordList.insert(tmp);
-            } else {
-                extraWordList.insert(tmp);
+            SinglyLinkedList<SinglyLinkedList> subWordList = new SinglyLinkedList<SinglyLinkedList>(); //单个首字母的链表
+            SinglyLinkedList<String> smallWordList = new SinglyLinkedList<String>();
+            SinglyLinkedList<String> midWordList = new SinglyLinkedList<String>();
+            SinglyLinkedList<String> largeWordList = new SinglyLinkedList<String>();
+            SinglyLinkedList<String> extraWordList = new SinglyLinkedList<String>();
+            do {
+                String tmp = curr.getData();
+                int length = tmp.length();
+                if (length <= 3) {
+                    smallWordList.insert(tmp);
+                } else if (length > 3 && length <= 5) {
+                    midWordList.insert(tmp);
+                } else if (length > 5 && length <= 8) {
+                    largeWordList.insert(tmp);
+                } else {
+                    extraWordList.insert(tmp);
+                }
             }
+            while (curr.getNext() != null && (curr.getData().charAt(0) == curr.getNext().getData().charAt(0))
+                    && (curr = curr.getNext()) != null);//下个节点不为空且首字母相同
+            subWordList.insert(smallWordList);
+            subWordList.insert(midWordList);
+            subWordList.insert(largeWordList);
+            subWordList.insert(extraWordList);
+            list.insert(subWordList);
         } while ((curr = curr.getNext()) != null);
-        list.insert(smallWordList);
-        list.insert(midWordList);
-        list.insert(largeWordList);
-        list.insert(extraWordList);
     }
 
     public static int editDistance(String word1, String word2) {
@@ -78,14 +84,14 @@ public class WordList {
     public static String dropLetters(String word) {
         Random r = new Random();
         int length = word.length();
-        int drop = r.nextInt(Math.min(3,length+1));  //不能掉段 3 ~ 5 ~ 8 ,否则找不到相似词
-        if(isNotSameLengthRange(length-drop,length)){  //掉段直接
+        int drop = r.nextInt(Math.min(3, length + 1));  //不能掉段 3 ~ 5 ~ 8 ,否则找不到相似词
+        if (isNotSameLengthRange(length - drop, length)) {  //掉段直接
             return word;
         }
         int count = 0;
         while (count < drop) {
             int index = r.nextInt(length);
-            word= word.substring(0, index)+ word.substring(index + 1);
+            word = word.substring(0, index) + word.substring(index + 1);
             length = word.length();
             count++;
         }
@@ -93,7 +99,7 @@ public class WordList {
     }
 
     private static boolean isNotSameLengthRange(int i, int j) {
-        if((i<=3&&j>3)||(i<=5&&j>5)||(i<=8&&j>8)){
+        if ((i <= 3 && j > 3) || (i <= 5 && j > 5) || (i <= 8 && j > 8)) {
             return true;
         }
         return false;
@@ -103,15 +109,21 @@ public class WordList {
         String res = null;
         int length = origin.length();
         SinglyLinkedNode<String> node;
+        SinglyLinkedNode<SinglyLinkedList> subWordListNode = list.getHead();
         SinglyLinkedNode<SinglyLinkedList> startingList;
+        for (int i = 0; i < origin.charAt(0) - 'a'; i++) {
+            subWordListNode = subWordListNode.getNext();
+        }
+
+        SinglyLinkedList<SinglyLinkedList> subWordList = subWordListNode.getData();
         if (length <= 3) {
-            startingList = list.getHead();
+            startingList = subWordList.getHead();
         } else if (length > 3 && length <= 5) {
-            startingList = list.getHead().getNext();
+            startingList = subWordList.getHead().getNext();
         } else if (length > 5 && length <= 8) {
-            startingList = list.getHead().getNext().getNext();
+            startingList = subWordList.getHead().getNext().getNext();
         } else {
-            startingList = list.getHead().getNext().getNext().getNext();
+            startingList = subWordList.getHead().getNext().getNext().getNext();
         }
         node = startingList.getData().getHead();
         int min_dist = 5;
@@ -126,7 +138,7 @@ public class WordList {
             }
             node = node.getNext();
         }
-      //  System.out.println("origin ["+origin+"] drop ["+drop+"] similarResult ["+res+"]");
+        //  System.out.println("origin ["+origin+"] drop ["+drop+"] similarResult ["+res+"]");
         return res;
     }
 
@@ -147,7 +159,7 @@ public class WordList {
         int count = 0;
         int index = 0;  //链表下标
         while (true) {
-            if (wordNode == null || count == 5 || indexes.size==0) {
+            if (wordNode == null || count == 5 || indexes.size == 0) {
                 break;
             }
             SinglyLinkedNode<Integer> indexNode = indexes.getHead();
